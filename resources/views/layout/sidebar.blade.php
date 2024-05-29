@@ -28,7 +28,7 @@
                 <div class="collapse {{ show_class(['employee/*']) }}" id="employee">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
-                            <a href="{{ url('/advanced-ui/cropper') }}" class="nav-link {{ active_class(['advanced-ui/cropper']) }}">Demographics</a>
+                            <a href="{{ route('demographic.employee') }}" class="nav-link {{ active_class(['employee/demographic']) }}">Demographics</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('/advanced-ui/sweet-alert') }}" class="nav-link {{ active_class(['advanced-ui/sweet-alert']) }}">Employee Performance</a>

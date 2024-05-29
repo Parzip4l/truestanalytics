@@ -11,6 +11,7 @@
 |
 */
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Analytics\EmployeeAnaylitics;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -22,6 +23,10 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('dashboard', DashboardController::class);
+    Route::group(['prefix' => 'employee'], function(){
+        Route::get('/demographic', [EmployeeAnaylitics::class, 'demographic'])->name('demographic.employee');
+    });
+   
 });
 
 Route::group(['prefix' => 'email'], function(){
