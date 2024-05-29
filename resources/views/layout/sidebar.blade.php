@@ -18,39 +18,13 @@
           <span class="link-title">Dashboard</span>
         </a>
       </li>
-      <li class="nav-item nav-category">web apps</li>
-      <li class="nav-item {{ active_class(['email/*']) }}">
-        <a class="nav-link" data-bs-toggle="collapse" href="#email" role="button" aria-expanded="{{ is_active_route(['email/*']) }}" aria-controls="email">
-          <i class="link-icon" data-feather="mail"></i>
-          <span class="link-title">Email</span>
-          <i class="link-arrow" data-feather="chevron-down"></i>
-        </a>
-        <div class="collapse {{ show_class(['email/*']) }}" id="email">
-          <ul class="nav sub-menu">
-            <li class="nav-item">
-              <a href="{{ url('/email/inbox') }}" class="nav-link {{ active_class(['email/inbox']) }}">Inbox</a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ url('/email/read') }}" class="nav-link {{ active_class(['email/read']) }}">Read</a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ url('/email/compose') }}" class="nav-link {{ active_class(['email/compose']) }}">Compose</a>
-            </li>
-          </ul>
-        </div>
-      </li>
-      <li class="nav-item {{ active_class(['apps/chat']) }}">
-        <a href="{{ url('/apps/chat') }}" class="nav-link">
-          <i class="link-icon" data-feather="message-square"></i>
-          <span class="link-title">Chat</span>
-        </a>
-      </li>
-      <li class="nav-item {{ active_class(['apps/calendar']) }}">
-        <a href="{{ url('/apps/calendar') }}" class="nav-link">
-          <i class="link-icon" data-feather="calendar"></i>
-          <span class="link-title">Calendar</span>
-        </a>
-      </li>
+      <li class="nav-item nav-category">Employee Analytics</li>
+        <li class="nav-item {{ active_class(['apps/chat']) }}">
+            <a href="{{ url('/apps/chat') }}" class="nav-link">
+            <i class="link-icon" data-feather="user"></i>
+            <span class="link-title">Employee Data</span>
+            </a>
+        </li>
       <li class="nav-item nav-category">Components</li>
       <li class="nav-item {{ active_class(['ui-components/*']) }}">
         <a class="nav-link" data-bs-toggle="collapse" href="#uiComponents" role="button" aria-expanded="{{ is_active_route(['ui-components/*']) }}" aria-controls="uiComponents">
