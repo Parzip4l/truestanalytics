@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+
 
 class DashboardController extends Controller
 {
@@ -16,14 +18,52 @@ class DashboardController extends Controller
     {
         try {
             $userData = session('userData');
-            return view('dashboard', compact('userData'));
+            $userProfile = session('userProfile');
+            // Check if 'name' key exists in $userData
+            if (!isset($userData['name'])) {
+                throw new \Exception('Name not found in user data.');
+            }
+
+            // Check if 'token' key exists in $userData
+            if (!isset($userData['token'])) {
+                throw new \Exception('Token not found in user data.');
+            }
+
+            // Fetch user profile data if available
+            $profileResponse = $this->fetchUserProfile($userData);
+
+            $userProfile = null;
+            if ($profileResponse && $profileResponse->ok()) {
+                $userProfile = $profileResponse->json()['data'];
+            } else {
+                \Log::error('Failed to fetch user profile.');
+                // Handle the error accordingly, maybe display a message or redirect
+            }
+
+            return view('dashboard', compact('userData', 'userProfile'));
         } catch (\Exception $e) {
-            // Tangani kesalahan di sini, misalnya log pesan kesalahan
             \Log::error($e->getMessage());
-            // Redirect atau tampilkan halaman kesalahan sesuai kebutuhan
-            return view('error_page');
+            return view('error_page' .$e);
         }
     }
+
+    
+    private function fetchUserProfile($userData)
+    {
+        // Assuming $userData contains a token
+        $token = $userData['token'];
+
+        // Get user identifier from session
+        $userIdentifier = $userData['name']; // Use 'name' instead of 'nama'
+
+        // Fetch user profile using the token and user identifier
+        $profileResponse = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->get('https://hris.truest.co.id/api/v1/profile/' . $userIdentifier);
+
+        return $profileResponse;
+    }
+
 
     /**
      * Show the form for creating a new resource.

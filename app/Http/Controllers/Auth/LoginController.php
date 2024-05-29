@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
+
 class LoginController extends Controller
 {
     public function showLoginForm()
@@ -23,19 +24,39 @@ class LoginController extends Controller
             $response = Http::post('https://hris.truest.co.id/api/v1/login', $credentials);
 
             if ($response->ok()) {
-                $userData = $response->json()['data'];
+                $responseData = $response->json();
+                $userData = $responseData['data'];
+                $token = $responseData['token'];
+
+                // Simpan token dalam userData
+                $userData['token'] = $token;
+
+                // Simpan userData dalam sesi
                 Session::put('userData', $userData);
+
+                // Fetch user profile using the token
+                $profileResponse = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $token,
+                ])->get('https://hris.truest.co.id/api/v1/profile/' . $userData['name']);
+
+                if ($profileResponse->ok()) {
+                    $userProfile = $profileResponse->json()['data'];
+                    // Store userProfile in session if needed
+                    Session::put('userProfile', $userProfile);
+                } else {
+                    throw new \Exception('Failed to fetch user profile.');
+                }
+
                 return redirect()->route('dashboard.index');
             } else {
                 throw new \Exception('Login failed. Invalid credentials.');
             }
         } catch (\Exception $e) {
             return back()->withErrors(['email' => $e->getMessage()])
-                ->withInput($request->only('email')); // Menambahkan kembali input email ke dalam form
+                ->withInput($request->only('email'));
         }
     }
-
-
+    
     public function logout(Request $request)
     {
         Auth::logout();
