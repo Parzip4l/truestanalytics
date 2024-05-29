@@ -16,7 +16,7 @@ Route::get('/', function () {
 
 Route::get('/login', function () {
     return view('login');
-})->name('login');
+})->name('pages.auth.login');
 
 Route::group(['prefix' => 'email'], function(){
     Route::get('inbox', function () { return view('pages.email.inbox'); });
