@@ -10,14 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::middleware('auth.token')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
-Route::get('/', function () {
-    return view('pages.auth.login');
-})->name('login');
+Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+Route::get('/dashboard', [App\Http\Controllers\Auth\LoginController::class, 'dashboard']);
 
 Route::group(['prefix' => 'email'], function(){
     Route::get('inbox', function () { return view('pages.email.inbox'); });
