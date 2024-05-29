@@ -31,6 +31,7 @@ class DashboardController extends Controller
 
             // Fetch user profile data if available
             $profileResponse = $this->fetchUserProfile($userData);
+            $uniqueVisitorsCount = $this->getUniqueVisitorsCount();
 
             $userProfile = null;
             if ($profileResponse && $profileResponse->ok()) {
@@ -40,12 +41,42 @@ class DashboardController extends Controller
                 // Handle the error accordingly, maybe display a message or redirect
             }
 
-            return view('dashboard', compact('userData', 'userProfile'));
+            return view('dashboard', compact('userData', 'userProfile','uniqueVisitorsCount'));
         } catch (\Exception $e) {
             \Log::error($e->getMessage());
             return view('error_page' .$e);
         }
     }
+
+    private function getUniqueVisitorsCount()
+    {
+        try {
+            $uniqueVisitorsResponse = Http::get('https://hris.truest.co.id/api/v1/unique-visitors');
+
+            if ($uniqueVisitorsResponse->ok()) {
+                $data = $uniqueVisitorsResponse->json();
+                return [
+                    'current_unique_visitor_count' => $data['current_unique_visitor_count'],
+                    'current_page_view_count' => $data['current_page_view_count'],
+                    'previous_unique_visitor_count' => $data['previous_unique_visitor_count'],
+                    'previous_page_view_count' =>$data['previous_page_view_count'],
+                    'visitor_count_change' => $data['visitor_count_change'],
+                    'visitor_count_change_percentage' => $data['visitor_count_change_percentage'],
+                    'page_view_count_change' => $data['page_view_count_change'],
+                    'page_view_count_change_percentage' => $data['page_view_count_change_percentage'],
+                ];
+            } else {
+                throw new \Exception('Failed to fetch unique visitors count.');
+            }
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return [
+                'unique_visitor_count' => 0,
+                'page_view_count' => 0,
+            ]; // Return 0 if there's an error
+        }
+    }
+
 
     
     private function fetchUserProfile($userData)
