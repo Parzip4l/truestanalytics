@@ -10,10 +10,13 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', function () {
     return view('dashboard');
-});
+})->middleware('auth.token');
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
 
 Route::group(['prefix' => 'email'], function(){
     Route::get('inbox', function () { return view('pages.email.inbox'); });
