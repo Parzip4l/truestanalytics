@@ -43,6 +43,19 @@ class LoginController extends Controller
                     $userProfile = $profileResponse->json()['data'];
                     // Store userProfile in session if needed
                     Session::put('userProfile', $userProfile);
+
+                    $employeeCountResponse = Http::withToken($token)
+                    ->post('https://hris.truest.co.id/api/v1/getEmployeeCount', [
+                        'unit_bisnis' => $userProfile['unit_bisnis'],
+                    ]);
+
+                if ($employeeCountResponse->ok()) {
+                    $employeeCount = $employeeCountResponse->json()['jumlah_karyawan'];
+                    // Lakukan apapun dengan jumlah karyawan yang diterima
+                } else {
+                    throw new \Exception('Failed to fetch employee count.');
+                }
+                
                 } else {
                     throw new \Exception('Failed to fetch user profile.');
                 }
@@ -56,7 +69,7 @@ class LoginController extends Controller
                 ->withInput($request->only('email'));
         }
     }
-    
+
     public function logout(Request $request)
     {
         Auth::logout();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Analytics\Employee;
 
 
 class DashboardController extends Controller
@@ -19,32 +20,40 @@ class DashboardController extends Controller
         try {
             $userData = session('userData');
             $userProfile = session('userProfile');
-            // Check if 'name' key exists in $userData
-            if (!isset($userData['name'])) {
-                throw new \Exception('Name not found in user data.');
+            
+            // Pastikan userData dan userProfile ada sebelum digunakan
+            if (!$userData || !$userProfile) {
+                throw new \Exception('User data or profile not found in session.');
             }
-
-            // Check if 'token' key exists in $userData
-            if (!isset($userData['token'])) {
-                throw new \Exception('Token not found in user data.');
-            }
-
-            // Fetch user profile data if available
+            
+            // Dapatkan token dan unit_bisnis pengguna
+            $token = $userData['token'];
+            $unitBisnis = $userProfile['employee']['unit_bisnis'];
+            
+            // Dapatkan profil pengguna
             $profileResponse = $this->fetchUserProfile($userData);
+            
+            // Dapatkan jumlah karyawan
+            $employeeCount = $this->EmployeeCount();
+            // Dapatkan jumlah pengunjung unik
             $uniqueVisitorsCount = $this->getUniqueVisitorsCount();
 
             $userProfile = null;
             if ($profileResponse && $profileResponse->ok()) {
                 $userProfile = $profileResponse->json()['data'];
             } else {
+                // Log pesan kesalahan jika gagal mendapatkan profil pengguna
                 \Log::error('Failed to fetch user profile.');
                 // Handle the error accordingly, maybe display a message or redirect
             }
 
-            return view('dashboard', compact('userData', 'userProfile','uniqueVisitorsCount'));
+            // Kembalikan view dashboard dengan data yang diperlukan
+            return view('dashboard', compact('userData', 'userProfile','uniqueVisitorsCount','employeeCount'));
         } catch (\Exception $e) {
+            // Tangani kesalahan dan log pesan kesalahan
             \Log::error($e->getMessage());
-            return view('error_page' .$e);
+            // Tampilkan halaman error_page dengan pesan kesalahan
+            return view('error_page'.$e);
         }
     }
 
@@ -77,6 +86,14 @@ class DashboardController extends Controller
         }
     }
 
+    private function EmployeeCount()
+    {
+        $userProfile = session('userProfile');
+        $unitBisnis = $userProfile['employee']['unit_bisnis'];
+        $employeeCount = Employee::where('unit_bisnis', $unitBisnis)->count();
+
+        return $employeeCount;
+    }
 
     
     private function fetchUserProfile($userData)
