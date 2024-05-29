@@ -4,41 +4,26 @@
 <div class="page-content d-flex align-items-center justify-content-center">
 
   <div class="row w-100 mx-0 auth-page">
-    <div class="col-md-8 col-xl-6 mx-auto">
+    <div class="col-md-4 col-xl-4 mx-auto">
       <div class="card">
         <div class="row">
-          <div class="col-md-4 pe-md-0">
-            <div class="auth-side-wrapper" style="background-image: url({{ url('https://via.placeholder.com/219x452') }})">
-
-            </div>
-          </div>
-          <div class="col-md-8 ps-md-0">
+          <div class="col-md-12 ps-md-0">
             <div class="auth-form-wrapper px-4 py-5">
-              <a href="#" class="noble-ui-logo d-block mb-2">Noble<span>UI</span></a>
-              <h5 class="text-muted fw-normal mb-4">Welcome back! Log in to your account.</h5>
-              <form class="forms-sample">
+                <a href="#" class="noble-ui-logo d-block mb-2 text-center">TRUE<span>ST</span></a>
+              <h5 class="text-muted fw-normal mb-4 text-center">Analytics Apps</h5>
+              <form class="forms-sample" id="login-form">
                 <div class="mb-3">
                   <label for="userEmail" class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="userEmail" placeholder="Email">
+                  <input type="email" class="form-control" id="email" placeholder="Email">
                 </div>
                 <div class="mb-3">
                   <label for="userPassword" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="userPassword" autocomplete="current-password" placeholder="Password">
-                </div>
-                <div class="form-check mb-3">
-                  <input type="checkbox" class="form-check-input" id="authCheck">
-                  <label class="form-check-label" for="authCheck">
-                    Remember me
-                  </label>
+                  <input type="password" class="form-control" id="password" autocomplete="current-password" placeholder="Password">
+                  <div class="invalid-feedback" id="error" style="display: none;"></div> <!-- Notifikasi error -->
                 </div>
                 <div>
-                  <a href="{{ url('/') }}" class="btn btn-primary me-2 mb-2 mb-md-0">Login</a>
-                  <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
-                    <i class="btn-icon-prepend" data-feather="twitter"></i>
-                    Login with twitter
-                  </button>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
                 </div>
-                <a href="{{ url('/auth/register') }}" class="d-block mt-3 text-muted">Not a user? Sign up</a>
               </form>
             </div>
           </div>
@@ -66,13 +51,18 @@
                     password: password
                 }),
                 success: function(response) {
-                    console.log('Login successful:', response);
-                    localStorage.setItem('token', response.token);
-                    window.location.href = '/dashboard';
+                    if (response.success) { // Periksa apakah login berhasil
+                        console.log('Login successful:', response);
+                        localStorage.setItem('token', response.token);
+                        window.location.href = '/dashboard'; // Arahkan ke halaman dashboard
+                    } else {
+                        let error = response.message || 'Login failed';
+                        $('#error').text(error).show(); // Tampilkan pesan error
+                    }
                 },
                 error: function(xhr) {
                     let error = xhr.responseJSON.message || 'Login failed';
-                    $('#error').text(error).show();
+                    $('#error').text(error).show(); // Tampilkan pesan error
                 }
             });
         });
