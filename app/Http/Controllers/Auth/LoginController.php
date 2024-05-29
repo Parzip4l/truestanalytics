@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -17,15 +19,29 @@ class LoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            return redirect()->intended('/dashboard');
-        }
+        try {
+            $response = Http::post('https://hris.truest.co.id/api/v1/login', $credentials);
 
-        return back()->withErrors(['email' => 'Invalid credentials']);
+            if ($response->ok()) {
+                $userData = $response->json()['data'];
+                Session::put('userData', $userData);
+                return redirect()->route('dashboard.index');
+            } else {
+                throw new \Exception('Login failed. Invalid credentials.');
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => $e->getMessage()])
+                ->withInput($request->only('email')); // Menambahkan kembali input email ke dalam form
+        }
     }
 
-    public function dashboard()
+
+    public function logout(Request $request)
     {
-        return view('dashboard');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('login');
     }
 }

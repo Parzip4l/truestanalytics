@@ -202,8 +202,10 @@
               <img class="wd-80 ht-80 rounded-circle" src="{{ url('https://via.placeholder.com/80x80') }}" alt="">
             </div>
             <div class="text-center">
-              <p class="tx-16 fw-bolder">Amiah Burton</p>
-              <p class="tx-12 text-muted">amiahburton@gmail.com</p>
+              @if(Session::has('userData'))
+                  <p class="tx-16 fw-bolder">{{ Session::get('userData')['name'] }}</p>
+                  <p class="tx-12 text-muted">{{ Session::get('userData')['email'] }}</p>
+              @endif
             </div>
           </div>
           <ul class="list-unstyled p-1">
@@ -226,11 +228,14 @@
               </a>
             </li>
             <li class="dropdown-item py-2">
-              <a href="javascript:;" class="text-body ms-0">
-                <i class="me-2 icon-md" data-feather="log-out"></i>
-                <span>Log Out</span>
-              </a>
-            </li>
+    <a href="{{ route('logout') }}" class="text-body ms-0" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="me-2 icon-md" data-feather="log-out"></i>
+        <span>Log Out</span>
+    </a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+</li>
           </ul>
         </div>
       </li>

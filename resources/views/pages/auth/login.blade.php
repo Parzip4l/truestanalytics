@@ -1,3 +1,5 @@
+<!-- resources/views/pages/auth/login.blade.php -->
+
 @extends('layout.master2')
 
 @section('content')
@@ -10,7 +12,25 @@
             <div class="auth-form-wrapper px-4 py-5">
               <a href="#" class="noble-ui-logo d-block mb-2 text-center">TRUE<span>ST</span></a>
               <h5 class="text-muted fw-normal mb-4 text-center">Analytics Apps</h5>
-              <form id="login-form">
+
+              <!-- Menampilkan pesan kesalahan jika terjadi -->
+              @if ($errors->any())
+              <div class="alert alert-danger" role="alert">
+                @foreach ($errors->all() as $error)
+                {{ $error }}<br>
+                @endforeach
+              </div>
+              @endif
+
+              <!-- Menampilkan pesan sukses jika ada -->
+              @if(session('status'))
+              <div class="alert alert-success" role="alert">
+                {{ session('status') }}
+              </div>
+              @endif
+
+              <form method="POST" action="{{ route('login.proses') }}">
+                @csrf
                 <div class="mb-3">
                   <label for="email" class="form-label">Email address</label>
                   <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
@@ -31,45 +51,3 @@
   </div>
 </div>
 @endsection
-
-@push('custom-scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const loginForm = document.getElementById('login-form');
-
-  loginForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(loginForm);
-    const email = formData.get('email');
-    const password = formData.get('password');
-
-    try {
-      const response = await fetch('https://hris.truest.co.id/api/v1/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
-      const data = await response.json();
-      console.log('Login successful:', data);
-
-      // Redirect or perform other actions upon successful login
-      window.location.href = '/dashboard'; // Change this URL to your dashboard URL
-    } catch (error) {
-      console.error('Error during login:', error);
-      alert('Login failed. Please check your email and password.');
-    }
-  });
-});
-</script>
-@endpush

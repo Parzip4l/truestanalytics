@@ -10,9 +10,15 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
-Route::get('/dashboard', [App\Http\Controllers\Auth\LoginController::class, 'dashboard']);
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login-proses', [LoginController::class, 'login'])->name('login.proses');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('dashboard', DashboardController::class);
+});
 
 Route::group(['prefix' => 'email'], function(){
     Route::get('inbox', function () { return view('pages.email.inbox'); });
