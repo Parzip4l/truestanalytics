@@ -12,9 +12,13 @@
 */
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
+
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login-proses', [LoginController::class, 'login'])->name('login.proses');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/', function () {
+    return redirect('/login'); // Ganti '/login' dengan URL halaman login Anda
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('dashboard', DashboardController::class);
