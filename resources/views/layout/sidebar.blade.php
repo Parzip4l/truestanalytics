@@ -19,34 +19,57 @@
                 </a>
             </li>
             <li class="nav-item nav-category">Analytics Data</li>
-            <li class="nav-item {{ active_class(['apps/chat']) }}">
-                <a href="{{ url('/apps/chat') }}" class="nav-link">
-                <i class="link-icon" data-feather="user"></i>
-                <span class="link-title">Employee</span>
+            <li class="nav-item {{ active_class(['employee/*']) }}">
+                <a class="nav-link" data-bs-toggle="collapse" href="#employee" role="button" aria-expanded="{{ is_active_route(['employee/*']) }}" aria-controls="employee">
+                    <i class="link-icon" data-feather="user"></i>
+                    <span class="link-title">Employee</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
+                <div class="collapse {{ show_class(['employee/*']) }}" id="employee">
+                    <ul class="nav sub-menu">
+                        <li class="nav-item">
+                            <a href="{{ url('/advanced-ui/cropper') }}" class="nav-link {{ active_class(['advanced-ui/cropper']) }}">Demographics</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/advanced-ui/sweet-alert') }}" class="nav-link {{ active_class(['advanced-ui/sweet-alert']) }}">Employee Performance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/advanced-ui/owl-carousel') }}" class="nav-link {{ active_class(['advanced-ui/owl-carousel']) }}">Training and Development</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/advanced-ui/sortablejs') }}" class="nav-link {{ active_class(['advanced-ui/sortablejs']) }}">Turnover</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
             <li class="nav-item {{ active_class(['apps/chat']) }}">
                 <a href="{{ url('/apps/chat') }}" class="nav-link">
-                <i class="link-icon" data-feather="user"></i>
+                <i class="link-icon" data-feather="clock"></i>
                 <span class="link-title">Attendance</span>
                 </a>
             </li>
             <li class="nav-item {{ active_class(['apps/chat']) }}">
                 <a href="{{ url('/apps/chat') }}" class="nav-link">
-                <i class="link-icon" data-feather="user"></i>
+                <i class="link-icon" data-feather="dollar-sign"></i>
                 <span class="link-title">Payroll</span>
                 </a>
             </li>
             <li class="nav-item {{ active_class(['apps/chat']) }}">
                 <a href="{{ url('/apps/chat') }}" class="nav-link">
-                <i class="link-icon" data-feather="user"></i>
+                <i class="link-icon" data-feather="user-plus"></i>
                 <span class="link-title">Reqruitment</span>
                 </a>
             </li>
             <li class="nav-item {{ active_class(['apps/chat']) }}">
                 <a href="{{ url('/apps/chat') }}" class="nav-link">
-                <i class="link-icon" data-feather="user"></i>
-                <span class="link-title">Rewards and Punisment</span>
+                <i class="link-icon" data-feather="alert-triangle"></i>
+                <span class="link-title">Work accident incidents</span>
+                </a>
+            </li>
+            <li class="nav-item {{ active_class(['apps/chat']) }}">
+                <a href="{{ url('/apps/chat') }}" class="nav-link">
+                <i class="link-icon" data-feather="user-check"></i>
+                <span class="link-title">Feedback</span>
                 </a>
             </li>
         </ul>
