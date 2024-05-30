@@ -31,13 +31,13 @@
                             <a href="{{ route('demographic.employee') }}" class="nav-link {{ active_class(['employee/demographic']) }}">Demographics</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('/advanced-ui/sweet-alert') }}" class="nav-link {{ active_class(['advanced-ui/sweet-alert']) }}">Employee Performance</a>
+                            <a href="{{ url('#') }}" class="nav-link {{ active_class(['advanced-ui/sweet-alert']) }}">Employee Performance</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('/advanced-ui/owl-carousel') }}" class="nav-link {{ active_class(['advanced-ui/owl-carousel']) }}">Training and Development</a>
+                            <a href="{{ url('#') }}" class="nav-link {{ active_class(['advanced-ui/owl-carousel']) }}">Training and Development</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('/advanced-ui/sortablejs') }}" class="nav-link {{ active_class(['advanced-ui/sortablejs']) }}">Turnover</a>
+                            <a href="{{ url('#') }}" class="nav-link {{ active_class(['advanced-ui/sortablejs']) }}">Turnover</a>
                         </li>
                     </ul>
                 </div>
@@ -48,26 +48,26 @@
                 <span class="link-title">Attendance</span>
                 </a>
             </li>
-            <li class="nav-item {{ active_class(['apps/chat']) }}">
-                <a href="{{ url('/apps/chat') }}" class="nav-link">
+            <li class="nav-item {{ active_class(['']) }}">
+                <a href="{{ url('#') }}" class="nav-link">
                 <i class="link-icon" data-feather="dollar-sign"></i>
                 <span class="link-title">Payroll</span>
                 </a>
             </li>
-            <li class="nav-item {{ active_class(['apps/chat']) }}">
-                <a href="{{ url('/apps/chat') }}" class="nav-link">
+            <li class="nav-item {{ active_class(['']) }}">
+                <a href="{{ url('#') }}" class="nav-link">
                 <i class="link-icon" data-feather="user-plus"></i>
                 <span class="link-title">Reqruitment</span>
                 </a>
             </li>
-            <li class="nav-item {{ active_class(['apps/chat']) }}">
-                <a href="{{ url('/apps/chat') }}" class="nav-link">
+            <li class="nav-item {{ active_class(['']) }}">
+                <a href="{{ url('#') }}" class="nav-link">
                 <i class="link-icon" data-feather="alert-triangle"></i>
                 <span class="link-title">Work accident incidents</span>
                 </a>
             </li>
-            <li class="nav-item {{ active_class(['apps/chat']) }}">
-                <a href="{{ url('/apps/chat') }}" class="nav-link">
+            <li class="nav-item {{ active_class(['']) }}">
+                <a href="{{ url('#') }}" class="nav-link">
                 <i class="link-icon" data-feather="user-check"></i>
                 <span class="link-title">Feedback</span>
                 </a>
