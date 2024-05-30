@@ -55,6 +55,12 @@
                 </a>
             </li>
             <li class="nav-item {{ active_class(['']) }}">
+                <a href="{{ url('') }}" class="nav-link">
+                <i class="link-icon" data-feather="credit-card"></i>
+                <span class="link-title">Koperasi</span>
+                </a>
+            </li>
+            <li class="nav-item {{ active_class(['']) }}">
                 <a href="{{ url('#') }}" class="nav-link">
                 <i class="link-icon" data-feather="user-plus"></i>
                 <span class="link-title">Reqruitment</span>

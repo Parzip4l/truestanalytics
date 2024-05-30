@@ -105,6 +105,66 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                    <div class="text-center mb-3">
+                            <p>Data Karyawan Dengan Tingkat Kehadiran Paling Tinggi Periode Bulan Ini</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12 col-xl-12">
+                                <table class="table" id="">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama</th>
+                                            <th>Organisasi</th>
+                                            <th>Total Kehadiran</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($userAktif as $data)
+                                        <tr>
+                                            <td>{{$data->nama}}</td>
+                                            <td>{{$data->organisasi}}</td>
+                                            <td>{{$data->total_absensi}}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                    <div class="text-center mb-3">
+                            <p>Data Karyawan Dengan Tingkat Kehadiran Paling Rendah Periode Bulan Ini</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12 col-xl-12">
+                                <table class="table" id="">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama</th>
+                                            <th>Organisasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($usernonAktif as $data)
+                                        <tr>
+                                            <td>{{$data->nama}}</td>
+                                            <td>{{$data->organisasi}}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>  
 </div>

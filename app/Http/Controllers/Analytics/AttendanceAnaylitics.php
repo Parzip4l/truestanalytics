@@ -66,8 +66,50 @@ class AttendanceAnaylitics extends Controller
 
         // Grafik Bar
         $AbsenByday = $this->byDay($employees, $unitBisnis, $today, $startDate , $endDate);
-        
-        return view ('pages.attendance.index',compact('hadir','employeeCount','absen','chartData','AbsenByday'));
+
+        // UserAktif
+        $userAktif = $this->mostActiveUsers($unitBisnis, $startDate, $endDate); 
+        $usernonAktif = $this->mostnonActiveUsers($unitBisnis, $startDate, $endDate);
+        return view ('pages.attendance.index',compact('hadir','employeeCount','absen','chartData','AbsenByday','userAktif','usernonAktif'));
+    }
+
+    private function mostActiveUsers($unitBisnis, $startDate, $endDate)
+    {
+        // Query untuk menghitung jumlah absensi berdasarkan unit bisnis dalam rentang periode
+        $mostActiveUsers = DB::table('absens')
+            ->join('karyawan', 'absens.nik', '=', 'karyawan.nik')
+            ->select('absens.nik', 'karyawan.nama','karyawan.organisasi', DB::raw('count(*) as total_absensi'))
+            ->where('karyawan.unit_bisnis', $unitBisnis)
+            ->where('absens.status','H')
+            ->whereBetween('absens.tanggal', [$startDate, $endDate])
+            ->groupBy('absens.nik', 'karyawan.nama','karyawan.organisasi')
+            ->orderByDesc('total_absensi')
+            ->limit(10) // Ambil 10 pengguna paling aktif
+            ->get();
+
+        return $mostActiveUsers;
+    }
+
+    private function mostnonActiveUsers($unitBisnis, $startDate, $endDate)
+    {
+        // Query untuk menghitung jumlah absensi berdasarkan unit bisnis dalam rentang periode
+        $absenNikSubquery = DB::table('absens')
+        ->select('absens.nik')
+        ->whereBetween('absens.tanggal', [$startDate, $endDate]);
+
+        // Query untuk mendapatkan karyawan yang tidak ada dalam subquery di atas
+        $mostnonActiveUsers = DB::table('karyawan')
+            ->leftJoinSub($absenNikSubquery, 'absens', function ($join) {
+                $join->on('karyawan.nik', '=', 'absens.nik');
+            })
+            ->where('karyawan.unit_bisnis', $unitBisnis)
+            ->where('karyawan.resign_status', 0)
+            ->whereNull('absens.nik')
+            ->select('karyawan.nik', 'karyawan.nama', 'karyawan.organisasi')
+            ->limit(10)
+            ->get();
+
+        return $mostnonActiveUsers;
     }
 
     private function kehadiran($employees, $unitBisnis, $today)
