@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Analytics;
+namespace App\Analytics\Payrol;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Attendance extends Model
+class PayrolManagement extends Model
 {
     use HasFactory;
     protected $connection = 'mysql';
-    protected $table = 'absens';
+    protected $table = 'payrols';
 }

@@ -13,6 +13,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Analytics\EmployeeAnaylitics;
 use App\Http\Controllers\Analytics\AttendanceAnaylitics;
+use App\Http\Controllers\Analytics\PayrolAnaylitics;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -29,6 +30,9 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::group(['prefix' => 'attendance'], function(){
         Route::get('/analytic-data', [AttendanceAnaylitics::class, 'index'])->name('demographic.attendance');
+    });
+    Route::group(['prefix' => 'payrol'], function(){
+        Route::get('/analytic-data', [PayrolAnaylitics::class, 'index'])->name('demographic.payrol');
     });
    
 });

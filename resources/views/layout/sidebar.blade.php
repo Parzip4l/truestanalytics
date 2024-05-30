@@ -48,8 +48,8 @@
                 <span class="link-title">Attendance</span>
                 </a>
             </li>
-            <li class="nav-item {{ active_class(['']) }}">
-                <a href="{{ url('#') }}" class="nav-link">
+            <li class="nav-item {{ active_class(['payrol/analytic-data']) }}">
+                <a href="{{ url('payrol/analytic-data') }}" class="nav-link">
                 <i class="link-icon" data-feather="dollar-sign"></i>
                 <span class="link-title">Payroll</span>
                 </a>
