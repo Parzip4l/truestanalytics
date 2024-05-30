@@ -72,12 +72,15 @@ class AttendanceAnaylitics extends Controller
 
     private function kehadiran($employees, $unitBisnis, $today)
     {
-        $DataHadir = Attendance::join('karyawan', 'absens.nik', '=', 'karyawan.nik')
-                    ->where('karyawan.unit_bisnis', $unitBisnis)
-                    ->where('absens.tanggal',$today)
-                    ->where('absens.status', 'H')
-                    ->select('absens.*', 'karyawan.*')
-                    ->count();
+        $DataHadir = DB::table('karyawan')
+            ->leftJoin('absens', function ($join) use ($today) {
+                $join->on('karyawan.nik', '=', 'absens.nik')
+                    ->whereDate('absens.tanggal', $today);
+            })
+            ->where('unit_bisnis',$unitBisnis)
+            ->where('resign_status',0)
+            ->where('absens.status', 'H')
+            ->count();
 
        // Jumlah total karyawan
         $totalKaryawan = Employee::where('unit_bisnis', $unitBisnis)
