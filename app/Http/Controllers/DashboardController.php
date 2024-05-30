@@ -87,6 +87,7 @@ class DashboardController extends Controller
             ->join('karyawan', 'absens.nik', '=', 'karyawan.nik')
             ->select('absens.nik', 'karyawan.nama','karyawan.organisasi', DB::raw('count(*) as total_absensi'))
             ->where('karyawan.unit_bisnis', $unitBisnis)
+            ->where('absens.status','H')
             ->whereBetween('absens.tanggal', [$startDate, $endDate])
             ->groupBy('absens.nik', 'karyawan.nama','karyawan.organisasi')
             ->orderByDesc('total_absensi')
