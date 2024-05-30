@@ -74,8 +74,8 @@ class AttendanceAnaylitics extends Controller
     {
         $DataHadir = Attendance::join('karyawan', 'absens.nik', '=', 'karyawan.nik')
                     ->where('karyawan.unit_bisnis', $unitBisnis)
-                    ->where('tanggal',$today)
-                    ->where('status', 'H')
+                    ->where('absens.tanggal',$today)
+                    ->where('absens.status', 'H')
                     ->select('absens.*', 'karyawan.*')
                     ->count();
 
