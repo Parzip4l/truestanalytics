@@ -11,15 +11,6 @@ use App\Analytics\Employee;
 
 class EmployeeAnaylitics extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        
-    }
 
     public function demographic()
     {
@@ -36,7 +27,8 @@ class EmployeeAnaylitics extends Controller
         $unitBisnis = $userProfile['employee']['unit_bisnis'];
 
         // Hitung Total Karyawan
-        $employeeCount = Employee::where('unit_bisnis', $unitBisnis)->count();
+        $employeeCount = Employee::where('unit_bisnis', $unitBisnis)
+        ->where('resign_status',0)->count();
 
         // Hitung Laki Laki
         $lakilaki = Employee::where('unit_bisnis', $unitBisnis)
@@ -57,12 +49,15 @@ class EmployeeAnaylitics extends Controller
 
         // Karyawan Berdasarkan Religion
         $agama = $this->agamaCalculate($employees);
+
+        // Berdasarkan Lama Kerja
+        $WorkingLength = $this->calculateWorkingLong($employees);
         
 
         $total = $lakilaki + $perempuan;
         $lakilakiPercentage = round(($total > 0) ? ($lakilaki / $total) * 100 : 0);
         $perempuanPercentage = round(($total > 0) ? ($perempuan / $total) * 100 : 0);
-        return view('pages.employee.demographic', compact('employeeCount','lakilaki','perempuan','lakilakiPercentage', 'perempuanPercentage','ageGroups','educationLevels','agama'));
+        return view('pages.employee.demographic', compact('employeeCount','lakilaki','perempuan','lakilakiPercentage', 'perempuanPercentage','ageGroups','educationLevels','agama','WorkingLength'));
     }
 
     private function calculateAgeGroups($employees)
@@ -191,5 +186,39 @@ class EmployeeAnaylitics extends Controller
             }
         }
         return $agamas;
+    }
+
+    private function calculateWorkingLong($employees)
+    {
+        // Inisialisasi array untuk menyimpan jumlah karyawan dalam setiap kategori usia
+        $workingGroup = [
+            '<1' => 0,
+            '1-2' => 0,
+            '3-4' => 0,
+            '5-6' => 0,
+            '>7' => 0,
+        ];
+        
+        // Loop melalui setiap karyawan
+        foreach ($employees as $employee) {
+            // Hitung usia karyawan
+            $joindate = $employee->joindate;
+            $ageWork = date_diff(date_create($joindate), date_create('now'))->y;
+            
+            // Kelompokkan karyawan ke dalam kategori usia
+            if ($ageWork < 1) {
+                $workingGroup['<1']++;
+            } elseif ($ageWork >= 1 && $ageWork <= 2) {
+                $workingGroup['1-2']++;
+            } elseif ($ageWork >= 3 && $ageWork <= 4) {
+                $workingGroup['3-4']++;
+            } elseif ($ageWork >= 5 && $ageWork <= 6) {
+                $workingGroup['5-6']++;
+            } else {
+                $workingGroup['>7']++;
+            }
+        }
+        
+        return $workingGroup;
     }
 }

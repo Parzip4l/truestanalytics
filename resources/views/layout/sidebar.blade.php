@@ -42,8 +42,8 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item {{ active_class(['apps/chat']) }}">
-                <a href="{{ url('/apps/chat') }}" class="nav-link">
+            <li class="nav-item {{ active_class(['attendance/analytic-data']) }}">
+                <a href="{{ url('/attendance/analytic-data') }}" class="nav-link">
                 <i class="link-icon" data-feather="clock"></i>
                 <span class="link-title">Attendance</span>
                 </a>

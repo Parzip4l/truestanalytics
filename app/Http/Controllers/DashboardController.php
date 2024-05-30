@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Analytics\Employee;
+use App\Analytics\Attendance;
+use App\Analytics\LogData;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 
 class DashboardController extends Controller
@@ -34,6 +39,7 @@ class DashboardController extends Controller
             $profileResponse = $this->fetchUserProfile($userData);
             
             // Dapatkan jumlah karyawan
+            $employees = Employee::where('unit_bisnis', $unitBisnis)->where('resign_status',0)->get();
             $employeeCount = $this->EmployeeCount();
             // Dapatkan jumlah pengunjung unik
             $uniqueVisitorsCount = $this->getUniqueVisitorsCount();
@@ -47,14 +53,47 @@ class DashboardController extends Controller
                 // Handle the error accordingly, maybe display a message or redirect
             }
 
+            $today = now();
+            $dates = $this->getPeriod($today);
+            $startDate = $dates['startDate'];
+            $endDate = $dates['endDate'];
+
+            $AbsenByday = $this->byDay($employees, $unitBisnis, $today, $startDate , $endDate);
+
+            // User Aktif
+            $userAktif = $this->mostActiveUsers($unitBisnis, $startDate, $endDate);
             // Kembalikan view dashboard dengan data yang diperlukan
-            return view('dashboard', compact('userData', 'userProfile','uniqueVisitorsCount','employeeCount'));
+            return view('dashboard', compact('userData', 'userProfile','uniqueVisitorsCount','employeeCount','AbsenByday','userAktif'));
         } catch (\Exception $e) {
             // Tangani kesalahan dan log pesan kesalahan
             \Log::error($e->getMessage());
             // Tampilkan halaman error_page dengan pesan kesalahan
             return view('error_page'.$e);
         }
+    }
+
+    private function getPeriod($today)
+    {
+        $startDate = $today->day >= 21 ? $today->copy()->day(20) : $today->copy()->subMonth()->day(21);
+        $endDate = $today->day >= 21 ? $today->copy()->addMonth()->day(20) : $today->copy()->day(20);
+
+        return ['startDate' => $startDate, 'endDate' => $endDate];
+    }
+
+    private function mostActiveUsers($unitBisnis, $startDate, $endDate)
+    {
+        // Query untuk menghitung jumlah absensi berdasarkan unit bisnis dalam rentang periode
+        $mostActiveUsers = DB::table('absens')
+            ->join('karyawan', 'absens.nik', '=', 'karyawan.nik')
+            ->select('absens.nik', 'karyawan.nama','karyawan.organisasi', DB::raw('count(*) as total_absensi'))
+            ->where('karyawan.unit_bisnis', $unitBisnis)
+            ->whereBetween('absens.tanggal', [$startDate, $endDate])
+            ->groupBy('absens.nik', 'karyawan.nama','karyawan.organisasi')
+            ->orderByDesc('total_absensi')
+            ->limit(5) // Ambil 10 pengguna paling aktif
+            ->get();
+
+        return $mostActiveUsers;
     }
 
     private function getUniqueVisitorsCount()
@@ -90,7 +129,7 @@ class DashboardController extends Controller
     {
         $userProfile = session('userProfile');
         $unitBisnis = $userProfile['employee']['unit_bisnis'];
-        $employeeCount = Employee::where('unit_bisnis', $unitBisnis)->count();
+        $employeeCount = Employee::where('unit_bisnis', $unitBisnis)->where('resign_status',0)->count();
 
         return $employeeCount;
     }
@@ -112,70 +151,50 @@ class DashboardController extends Controller
         return $profileResponse;
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    private function byDay($employees, $unitBisnis, $today, $startDate, $endDate)
     {
-        //
-    }
+        // Query untuk mendapatkan data kehadiran pada rentang tanggal
+        $dataHadir = Attendance::join('karyawan', 'absens.nik', '=', 'karyawan.nik')
+                        ->where('karyawan.unit_bisnis', $unitBisnis)
+                        ->whereBetween('tanggal', [$startDate, $endDate])
+                        ->where('status', 'H')
+                        ->select('absens.*', 'karyawan.*')
+                        ->get();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        // Data Absensi 
+        $labels = [];
+        $currentDate = $startDate->copy();
+        while ($currentDate->lte($endDate)) {
+            $labels[] = $currentDate->format('Y-m-d');
+            $currentDate->addDay();
+        }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        // Inisialisasi array data untuk chart
+        $dataAbsenByDay = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Hadir',
+                    'backgroundColor' => 'rgb(54, 162, 235)', // Warna biru untuk data hadir
+                    'data' => [],
+                ],
+                [
+                    'label' => 'Tidak Hadir',
+                    'backgroundColor' => 'rgb(255, 99, 132)', // Warna merah untuk data tidak hadir
+                    'data' => [],
+                ]
+            ]
+        ];
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+        // Hitung jumlah kehadiran dan ketidakhadiran untuk setiap tanggal
+        foreach ($labels as $label) {
+            $hadirCount = $dataHadir->where('tanggal', $label)->count();
+            $tidakHadirCount = $employees->count() - $hadirCount; // Jumlah karyawan dikurangi jumlah hadir untuk mendapatkan tidak hadir
+            $dataAbsenByDay['datasets'][0]['data'][] = $hadirCount;
+            $dataAbsenByDay['datasets'][1]['data'][] = $tidakHadirCount;
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        // Kembalikan data absensi per hari
+        return $dataAbsenByDay;
     }
 }

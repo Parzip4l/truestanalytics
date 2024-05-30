@@ -40,7 +40,7 @@
                   <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 </div>
                 <div>
-                  <button type="submit" class="btn btn-primary w-100">Login</button>
+                  <button type="submit" class="btn btn-primary bg-primary w-100">Login</button>
                 </div>
               </form>
             </div>
