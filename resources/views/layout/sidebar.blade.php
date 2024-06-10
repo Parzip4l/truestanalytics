@@ -43,10 +43,21 @@
                 </div>
             </li>
             <li class="nav-item {{ active_class(['attendance/analytic-data']) }}">
-                <a href="{{ url('/attendance/analytic-data') }}" class="nav-link">
-                <i class="link-icon" data-feather="clock"></i>
-                <span class="link-title">Attendance</span>
+                <a class="nav-link" data-bs-toggle="collapse" href="#attendance" role="button" aria-expanded="{{ is_active_route(['attendance/*']) }}" aria-controls="attendance">
+                    <i class="link-icon" data-feather="user"></i>
+                    <span class="link-title">Attendance</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
+                <div class="collapse {{ show_class(['attendance/*']) }}" id="attendance">
+                    <ul class="nav sub-menu">
+                        <li class="nav-item">
+                            <a href="{{ url('attendance/analytic-data') }}" class="nav-link {{ active_class(['attendance/analytic-data']) }}">Attendance Master</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('attendance/time-off') }}" class="nav-link {{ active_class(['attendance/time-off']) }}">Time Off</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
             <li class="nav-item {{ active_class(['payrol/analytic-data']) }}">
                 <a href="{{ url('payrol/analytic-data') }}" class="nav-link">
